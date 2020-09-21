@@ -2,4 +2,7 @@ executable("utaha") {
   sources = [
     "src/main.cc"
   ]
+  deps = [
+    "//v8:d8"
+  ]
 }
