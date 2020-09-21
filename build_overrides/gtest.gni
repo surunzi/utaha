@@ -1,0 +1,5 @@
+gtest_include_multiprocess = false
+
+gtest_include_platform_test = false
+
+gtest_include_objc_support = false
