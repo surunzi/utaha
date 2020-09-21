@@ -1,3 +1,5 @@
+use_relative_paths = True
+
 vars = {
   'chromium_git': 'https://chromium.googlesource.com',
   'build_revision': '153ad0bf09eda458f1ef4f74dcac5c12d530d770',
@@ -8,10 +10,10 @@ vars = {
 
 deps = {
   'build':
-    Var('chromium_url') + '/chromium/src/build.git' + '@' + Var('build_revision'),
-  'src/buildtools':
+    Var('chromium_git') + '/chromium/src/build.git' + '@' + Var('build_revision'),
+  'buildtools':
     Var('chromium_git') + '/chromium/src/buildtools.git' + '@' + Var('buildtools_revision'),
-  'src/buildtools/mac': {
+  'buildtools/mac': {
     'packages': [
       {
         'package': 'gn/gn/mac-amd64',
@@ -21,7 +23,7 @@ deps = {
     'dep_type': 'cipd',
     'condition': 'host_os == "mac"',
   },
-  'src/v8':
+  'v8':
     Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
 }
 
