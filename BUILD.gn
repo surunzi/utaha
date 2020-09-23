@@ -3,14 +3,11 @@ executable("utaha") {
     "src/main.cc"
   ]
 
-  configs = []
+  configs += [
+    "//v8:external_config",
+  ]
 
   include_dirs = [
     "//v8",
-    "//v8/include",
-  ]
-
-  deps = [
-    "//v8:v8_headers"
   ]
 }
