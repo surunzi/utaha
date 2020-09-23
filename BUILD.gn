@@ -2,7 +2,15 @@ executable("utaha") {
   sources = [
     "src/main.cc"
   ]
+
+  configs = []
+
+  include_dirs = [
+    "//v8",
+    "//v8/include",
+  ]
+
   deps = [
-    "//v8:d8"
+    "//v8:v8_headers"
   ]
 }

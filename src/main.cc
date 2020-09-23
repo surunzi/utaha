@@ -1,6 +1,8 @@
-#include <iostream>
+#include "stdio.h"
+// #include "include/v8.h"
 
-int main() {
-  std::cout << "Hello world!" << std::endl;
+int main(int argc, char* argv[]) {
+  // v8::V8::InitializeICUDefaultLocation(argv[0]);
+
   return 0;
 }
