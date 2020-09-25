@@ -15,6 +15,7 @@ vars = {
   'clang_revision': '92b362238013c401926b8a45b0b8f0a42d506120',
   'gn_version': 'git_revision:e002e68a48d1c82648eadde2f6aafa20d08c36f2',
   'v8_revision': '80dc1e8055bca07e8da6162bace5ee87f23faccf',
+  'uv_revision': '25f4b8b8a3c0f934158cd37a37b0525d75ca488e',
   'icu_revision': '79326efe26e5440f530963704c3c0ff965b3a4ac',
   'zlib_revision': 'f8517bd62931d7adb9bcefb0cbe3c2ca5cd8862c',
   'googletest_revision': '4fe018038f87675c083d0cfb6a6b57c274fb1753',
@@ -48,6 +49,8 @@ deps = {
     Var('chromium_git') + '/chromium/src/tools/clang.git' + '@' + Var('clang_revision'),
   'v8':
     Var('chromium_git') + '/v8/v8.git' + '@' +  Var('v8_revision'),
+  'uv':
+    'https://github.com/libuv/libuv.git' + '@' + Var('uv_revision'),  
   'third_party/icu':
     Var('chromium_git') + '/chromium/deps/icu.git' + '@' + Var('icu_revision'),
   'third_party/zlib':

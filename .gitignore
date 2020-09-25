@@ -1,4 +1,5 @@
 /out
+/base
 /build
 /buildtools
 /tools
@@ -6,3 +7,4 @@
 !/third_party/googletest
 /third_party/googletest/src
 /v8
+/uv
