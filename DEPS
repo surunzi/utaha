@@ -39,6 +39,16 @@ deps = {
     'dep_type': 'cipd',
     'condition': 'host_os == "mac"',
   },
+  'buildtools/win': {
+    'packages': [
+      {
+        'package': 'gn/gn/windows-amd64',
+        'version': Var('gn_version'),
+      }
+    ],
+    'dep_type': 'cipd',
+    'condition': 'host_os == "win"',
+  },
   'base/trace_event/common':
     Var('chromium_git') + '/chromium/src/base/trace_event/common.git' + '@' + Var('trace_event_revision'),
   'buildtools/third_party/libc++/trunk':
@@ -71,5 +81,12 @@ hooks = [
     # clang not supported on aix
     'condition': 'host_os != "aix"',
     'action': ['python', 'tools/clang/scripts/update.py'],
+  },
+  {
+    # Update LASTCHANGE.
+    'name': 'lastchange',
+    'pattern': '.',
+    'action': ['python', 'build/util/lastchange.py',
+               '-o', 'build/util/LASTCHANGE'],
   },
 ]
