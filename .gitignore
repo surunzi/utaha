@@ -6,5 +6,7 @@
 /third_party/*
 !/third_party/googletest
 /third_party/googletest/src
+!/third_party/breakpad
+/third_party/breakpad/breakpad
 /v8
 /uv
