@@ -1,10 +1,11 @@
 executable("utaha") {
   sources = [
     "src/main.cc",
+    "src/utaha.cc",
   ]
 
   include_dirs = [
-    "//v8",
+    "//v8/include",
   ]
 
   deps = [
