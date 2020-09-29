@@ -9,6 +9,8 @@ class Utaha {
   public:
     Utaha();
     int Run();
+  private:
+    v8::Isolate* isolate;  
 };
 
 int Start(int argc, char* argv[]);

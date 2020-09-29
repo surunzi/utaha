@@ -5,7 +5,7 @@ executable("utaha") {
   ]
 
   include_dirs = [
-    "//v8/include",
+    "//v8",
   ]
 
   deps = [
