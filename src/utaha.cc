@@ -3,52 +3,130 @@
 #include "include/libplatform/libplatform.h"
 #include "include/v8.h"
 
-namespace utaha {
+namespace utaha
+{
 
-using v8::Isolate;
+  using v8::Isolate;
 
-Utaha::Utaha() {
-  Isolate::CreateParams params;
-  params.array_buffer_allocator = v8::ArrayBuffer::Allocator::NewDefaultAllocator();
-  isolate = Isolate::New(params);
-}
+  Utaha::Utaha()
+  {
+    Isolate::CreateParams params;
+    params.array_buffer_allocator = v8::ArrayBuffer::Allocator::NewDefaultAllocator();
+    isolate = Isolate::New(params);
+  }
 
-int Utaha::Run() {
-  Isolate::Scope isolate_scope(isolate);
+  Utaha::~Utaha()
+  {
+    isolate->Dispose();
+  }
 
-  v8::HandleScope handle_scope(isolate);
+  int Utaha::Run()
+  {
+    Isolate::Scope isolate_scope(isolate);
 
-  v8::Local<v8::Context> context = v8::Context::New(isolate);
+    RunShell();
 
-  v8::Context::Scope context_scope(context);
+    return 0;
+  }
 
-  v8::Local<v8::String> source =
-    v8::String::NewFromUtf8(isolate, "'Hello' + ', World!'",
-                            v8::NewStringType::kNormal)
-      .ToLocalChecked();
+  v8::Local<v8::String> Utaha::ReadFromStdin()
+  {
+    static const int kBufferSize = 256;
+    char buffer[kBufferSize];
+    v8::Local<v8::String> accumulator = v8::String::NewFromUtf8Literal(isolate, "");
+    int length;
+    while (true)
+    {
+      char *input = nullptr;
+      input = fgets(buffer, kBufferSize, stdin);
+      if (input == nullptr)
+        return v8::Local<v8::String>();
+      length = static_cast<int>(strlen(buffer));
+      if (length == 0)
+      {
+        return accumulator;
+      }
+      else if (buffer[length - 1] != '\n')
+      {
+        accumulator = v8::String::Concat(
+            isolate, accumulator,
+            v8::String::NewFromUtf8(isolate, buffer, v8::NewStringType::kNormal, length)
+                .ToLocalChecked());
+      }
+      else if (length > 1 && buffer[length - 2] == '\\')
+      {
+        buffer[length - 2] = '\n';
+        accumulator =
+            v8::String::Concat(isolate, accumulator,
+                               v8::String::NewFromUtf8(isolate, buffer,
+                                                       v8::NewStringType::kNormal, length - 1)
+                                   .ToLocalChecked());
+      }
+      else
+      {
+        return v8::String::Concat(
+            isolate, accumulator,
+            v8::String::NewFromUtf8(isolate, buffer, v8::NewStringType::kNormal,
+                                    length - 1)
+                .ToLocalChecked());
+      }
+    }
+  }
 
-  v8::Local<v8::Script> script =
-    v8::Script::Compile(context, source).ToLocalChecked();
+  void Utaha::RunShell()
+  {
+    v8::HandleScope outer_scope(isolate);
 
-  v8::Local<v8::Value> result = script->Run(context).ToLocalChecked();
+    v8::Local<v8::Context> context = v8::Context::New(isolate);
 
-  v8::String::Utf8Value utf8(isolate, result);
+    v8::Context::Scope context_scope(context);
 
-  std::cout << *utf8 << std::endl;
+    while (true)
+    {
+      v8::HandleScope inner_scope(isolate);
+      printf("> ");
+      v8::Local<v8::String> input = ReadFromStdin();
+      if (input.IsEmpty())
+      {
+        break;
+      }
+      v8::Local<v8::Value> result = ExecuteString(input);
 
-  return 0;
-}
+      if (!result->IsUndefined())
+      {
+        v8::String::Utf8Value str(isolate, result);
+        fwrite(*str, sizeof(**str), str.length(), stdout);
+        printf("\n");
+      }
+    }
+  }
 
-int Start(int argc, char* argv[]) {
-  v8::V8::InitializeICUDefaultLocation(argv[0]);
-  v8::V8::InitializeExternalStartupData(argv[0]);
-  std::unique_ptr<v8::Platform> platform = v8::platform::NewDefaultPlatform();
-  v8::V8::InitializePlatform(platform.get());
-  v8::V8::Initialize();
+  v8::Local<v8::Value> Utaha::ExecuteString(v8::Local<v8::String> source)
+  {
+    v8::Local<v8::Context> context(isolate->GetCurrentContext());
 
-  Utaha utaha;
+    v8::Local<v8::Script> script = v8::Script::Compile(context, source).ToLocalChecked();
 
-  return utaha.Run();
-}
+    return script->Run(context).ToLocalChecked();
+  }
 
-}
+  int Start(int argc, char *argv[])
+  {
+    v8::V8::InitializeICUDefaultLocation(argv[0]);
+    v8::V8::InitializeExternalStartupData(argv[0]);
+    std::unique_ptr<v8::Platform> platform = v8::platform::NewDefaultPlatform();
+    v8::V8::InitializePlatform(platform.get());
+    v8::V8::Initialize();
+
+    int result;
+    {
+      Utaha utaha;
+      result = utaha.Run();
+    }
+
+    v8::V8::Dispose();
+    v8::V8::ShutdownPlatform();
+
+    return result;
+  }
+} // namespace utaha
