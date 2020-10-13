@@ -77,7 +77,9 @@ namespace utaha
   {
     v8::HandleScope outer_scope(isolate);
 
-    v8::Local<v8::Context> context = v8::Context::New(isolate);
+    v8::Local<v8::ObjectTemplate> global_template = CreateGlobalTemplate();
+
+    v8::Local<v8::Context> context = v8::Context::New(isolate, nullptr, global_template);
 
     v8::Context::Scope context_scope(context);
 
@@ -108,6 +110,20 @@ namespace utaha
     v8::Local<v8::Script> script = v8::Script::Compile(context, source).ToLocalChecked();
 
     return script->Run(context).ToLocalChecked();
+  }
+
+  v8::Local<v8::ObjectTemplate> Utaha::CreateGlobalTemplate()
+  {
+    v8::Local<v8::ObjectTemplate> global_template = v8::ObjectTemplate::New(isolate);
+
+    global_template->Set(isolate, "version", v8::FunctionTemplate::New(isolate, Version));
+
+    return global_template;
+  }
+
+  void Utaha::Version(const v8::FunctionCallbackInfo<v8::Value> &args)
+  {
+    args.GetReturnValue().Set(v8::String::NewFromUtf8(args.GetIsolate(), "0.0.1").ToLocalChecked());
   }
 
   int Start(int argc, char *argv[])
