@@ -3,6 +3,10 @@
 
 #include "v8.h"
 
+using v8::Local;
+using v8::String;
+using v8::Value;
+
 namespace utaha
 {
 
@@ -16,10 +20,10 @@ namespace utaha
   private:
     v8::Isolate *isolate;
     void RunShell();
-    v8::Local<v8::String> ReadFromStdin();
-    v8::Local<v8::ObjectTemplate> CreateGlobalTemplate();
-    v8::Local<v8::Value> ExecuteString(v8::Local<v8::String> source);
-    static void Version(const v8::FunctionCallbackInfo<v8::Value> &args);
+    Local<String> ReadFromStdin();
+    Local<v8::ObjectTemplate> CreateGlobalTemplate();
+    Local<Value> ExecuteString(Local<String> source);
+    static void Version(const v8::FunctionCallbackInfo<Value> &args);
   };
 
   int Start(int argc, char *argv[]);
