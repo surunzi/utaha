@@ -24,6 +24,7 @@ namespace utaha
     Local<v8::ObjectTemplate> CreateGlobalTemplate();
     Local<Value> ExecuteString(Local<String> source);
     static void Version(const v8::FunctionCallbackInfo<Value> &args);
+    static void Quit(const v8::FunctionCallbackInfo<Value> &args);
   };
 
   int Start(int argc, char *argv[]);

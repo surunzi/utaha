@@ -118,16 +118,26 @@ namespace utaha
 
   Local<v8::ObjectTemplate> Utaha::CreateGlobalTemplate()
   {
-    Local<v8::ObjectTemplate> global_template = v8::ObjectTemplate::New(isolate);
+    Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
 
-    global_template->Set(isolate, "version", v8::FunctionTemplate::New(isolate, Version));
+    global->Set(isolate, "version", v8::FunctionTemplate::New(isolate, Version));
+    global->Set(isolate, "quit", v8::FunctionTemplate::New(isolate, Quit));
 
-    return global_template;
+    return global;
   }
 
   void Utaha::Version(const v8::FunctionCallbackInfo<Value> &args)
   {
     args.GetReturnValue().Set(String::NewFromUtf8(args.GetIsolate(), "0.0.1").ToLocalChecked());
+  }
+
+  void Utaha::Quit(const v8::FunctionCallbackInfo<v8::Value> &args)
+  {
+    int exit_code =
+        args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromMaybe(0);
+    fflush(stdout);
+    fflush(stderr);
+    exit(exit_code);
   }
 
   int Start(int argc, char *argv[])
