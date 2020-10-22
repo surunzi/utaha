@@ -1,14 +1,30 @@
+copy("uv") {
+  if (is_debug) {
+    sources = [ "//uv/build/Debug/uv.dll" ]
+  } else {
+    sources = [ "//uv/build/Release/uv.dll" ]
+  }
+  outputs = [ "$root_out_dir/uv.dll" ]
+}
+
 executable("utaha") {
   sources = [
     "src/main.cc",
     "src/utaha.cc",
   ]
 
-  include_dirs = [
-    "//v8",
-  ]
+  include_dirs = [ "//uv/include" ]
+
+  if (is_debug) {
+    lib_dirs = [ "//uv/build/Debug" ]
+  } else {
+    lib_dirs = [ "//uv/build/Release" ]
+  }
+
+  libs = [ "uv.lib" ]
 
   deps = [
+    ":uv",
     "//v8",
     "//v8:v8_libplatform",
   ]

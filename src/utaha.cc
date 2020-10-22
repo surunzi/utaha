@@ -1,7 +1,8 @@
 #include <iostream>
 #include "utaha.h"
-#include "include/libplatform/libplatform.h"
-#include "include/v8.h"
+#include "libplatform/libplatform.h"
+#include "v8.h"
+#include "uv.h"
 
 using v8::Context;
 using v8::Isolate;
@@ -153,6 +154,10 @@ namespace utaha
       Utaha utaha;
       result = utaha.Run();
     }
+
+    uv_loop_init(uv_default_loop());
+    uv_run(uv_default_loop(), UV_RUN_DEFAULT);
+    uv_loop_close(uv_default_loop());
 
     V8::Dispose();
     V8::ShutdownPlatform();
